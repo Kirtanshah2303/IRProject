@@ -130,7 +130,9 @@ def fetch_comments():
             'positive_comments': positive_comments,
             'negative_comments': negative_comments,
             'ideas' : ideas_concerns['Idea/Suggestion'],
-            'concerns' : ideas_concerns['Concern']
+            'concerns' : ideas_concerns['Concern'],
+            'infavour' : infavour,
+            'against' : against
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
