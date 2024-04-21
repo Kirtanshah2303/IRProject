@@ -74,7 +74,7 @@ def fetch_comments():
 
         # Pass user input government policy name and its context to our model as a context along with the question
         context_to_learn = f"Learn the following government policy thoroughly and understand its context. The following is the context that I want the model to learn.\nThe name of the policy is {policy_name} and the following is the policy context: {policy_context}"
-
+        final_comments = []
         all_filtered_comments = {'positive': [], 'negative': []}
         for comment in all_comments:
             # question = f"Say 'Relevant' or 'Irrelevant' only by checking whether the comment '{comment}' is relevant or irrelevant to the policy: '{context_to_learn}'?"
@@ -83,12 +83,12 @@ def fetch_comments():
             # print(response.text)
             if (response.text.lower() == 'positive'):
                 all_filtered_comments['positive'].append(comment)
+                final_comments.append(comment)
                 print(f"Positive COMMENT FOUND: {comment}")
             elif (response.text.lower() == 'negative'):
                 all_filtered_comments['negative'].append(comment)
-                print(f"Negative COMMENT FOUND: {comment}")
-                # else:
-            #     print(f"Neutral COMMENT FOUND: {comment}")
+                final_comments.append(comment)
+                print(f"Negative COMMENT FOUND: {comment}")
 
         print(
             f"\nTotal comments post-filtering: {len(all_filtered_comments['positive']) + len(all_filtered_comments['negative'])}\n")
@@ -97,15 +97,40 @@ def fetch_comments():
         positive_comments = all_filtered_comments['positive']
         negative_comments = all_filtered_comments['negative']
 
+        infavour = round((len(all_filtered_comments['positive']) / (len(all_filtered_comments['positive']) + len(all_filtered_comments['negative']))) * 100)
+        against = round((len(all_filtered_comments['negative']) / (len(all_filtered_comments['positive']) + len(all_filtered_comments['negative']))) * 100)
+
         # # Filtering comments - assuming use of a generative model or similar logic
         # # This section is hypothetical and needs actual implementation
         # positive_comments = [comment for comment in all_comments if 'good' in comment]
         # negative_comments = [comment for comment in all_comments if 'bad' in comment]
 
+        ideas_concerns = {'Idea/Suggestion': [], 'Concern': []}
+        list_coments = []
+        for comment in final_comments:
+            # question = f"Say 'Relevant' or 'Irrelevant' only by checking whether the comment '{comment}' is relevant or irrelevant to the policy: '{context_to_learn}'?"
+            question = f"Say 'Idea/Suggestion', 'Concern', 'Both' or 'Neutral' by checking whether the comment '{comment}' is 'Idea/Suggestion', 'Concern', 'Idea and Concern Both' or 'netural' about the policy: '{context_to_learn}'?"
+            response = model.generate_content(context_to_learn + "\n" + question)
+            list_coments.append(response)
+            if (response.text.lower() == 'idea' or response.text.lower() == 'suggestion'):
+                ideas_concerns['Idea/Suggestion'].append(comment)
+                list_coments.append(comment)
+            elif (response.text.lower() == 'concern'):
+                ideas_concerns['Concern'].append(comment)
+                list_coments.append(comment)
+            elif (response.text.lower() == 'both'):
+                ideas_concerns['Idea/Suggestion'].append(comment)
+                ideas_concerns['Concern'].append(comment)
+                list_coments.append(comment)
+            else:
+                list_coments.append(comment)
+
         return jsonify({
             'total_comments': len(all_comments),
             'positive_comments': positive_comments,
-            'negative_comments': negative_comments
+            'negative_comments': negative_comments,
+            'ideas' : ideas_concerns['Idea/Suggestion'],
+            'concerns' : ideas_concerns['Concern']
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
