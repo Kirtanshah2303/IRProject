@@ -127,6 +127,44 @@ def home_screen():
     put_markdown("## Policy Analysis Tool")
     put_buttons(['Start Analysis'], onclick=lambda _: main())
 
+def display_data(policy_name,data):
+    put_html(f"<h2>{policy_name}</h2>")
+    # put_html("</br>")
+    put_html("<h3>Total Comments</h3>")
+    put_html("<h1>" + str(data["total_comments"]) + "</h1>")
+
+    put_html("<h3>Infavor States</h3>")
+    put_html("<h4>" + str(data["infavor"]) + "%</h4>")
+
+    put_html("<h3>Against States</h3>")
+    put_html("<h4>" + str(data["against"]) + "%</h4>")
+
+    put_html("<h3>Positive Comments</h3>")
+    for comment in data["positive_comments"]:
+        # put_html("<ul>" + "".join(f"<li>{line}</li>" for line in comment.split("\n") if line.strip()) + "</ul>")
+        put_html("<ul><li>" + comment + "</li></ul>")
+
+    put_html("<h3>Negative Comments</h3>")
+    for comment in data['negative_comments']:
+        # put_html("<ul>" + "".join(f"<li>{line}</li>" for line in comment.split("\n") if line.strip()) + "</ul>")
+        put_html("<ul><li>" + comment + "</li></ul>")
+
+    put_html("<h3>Ideas and Suggestions</h3>")
+    for comment in data['ideas_suggestions']:
+        # put_html("<ul>" + "".join(f"<li>{line}</li>" for line in comment.split("\n") if line.strip()) + "</ul>")
+        put_html("<ul><li>" + comment + "</li></ul>")
+
+    put_html("<h3>Concerns</h3>")
+    for comment in data['concerns']:
+        # put_html("<ul>" + "".join(f"<li>{line}</li>" for line in comment.split("\n") if line.strip()) + "</ul>")
+        put_html("<ul><li>" + comment + "</li></ul>")
+
+    # Setup the download button
+    # put_buttons(['Download PDF Report'], onclick=[lambda: download_pdf(data,"Generated_Report.pdf")])
+    put_buttons(['Download PDF Report'], onclick=lambda _: download_pdf(data, "Generated_Report.pdf"))
+
+    # put_buttons(['Go to Home Screen'], onclick=home_screen)
+    put_buttons(['Go to Home Screen'], onclick=lambda _: home_screen())
 
 def main():
     clear()
@@ -152,6 +190,13 @@ def main():
     if not policy_name:
         toast("Policy name is required.", color='error')
         return
+
+    if policy_name == "Pradhan Mantri Jan Dhan Yojana":
+        # Load and display the data from the JSON file
+        with open('data.json', 'r') as json_file:
+            data = json.load(json_file)
+            display_data(policy_name,data)
+            return
 
     try:
         toast("Authenticating with Reddit...", color='info')
