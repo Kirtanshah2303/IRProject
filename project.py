@@ -4,6 +4,10 @@ import praw
 import os
 import google.generativeai as genai
 
+from pywebio.input import *
+from pywebio.output import *
+
+
 app = Flask(__name__)
 
 
@@ -127,10 +131,10 @@ def fetch_comments():
 
         return jsonify({
             'total_comments': len(all_comments),
-            'positive_comments': positive_comments,
-            'negative_comments': negative_comments,
-            'ideas' : ideas_concerns['Idea/Suggestion'],
-            'concerns' : ideas_concerns['Concern'],
+            'positive_comments': positive_comments[:10],
+            'negative_comments': negative_comments[:10],
+            'ideas' : ideas_concerns['Idea/Suggestion'][:10],
+            'concerns' : ideas_concerns['Concern'][:10],
             'infavour' : infavour,
             'against' : against
         })
