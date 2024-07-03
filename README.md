@@ -50,7 +50,7 @@ pip install -r requirements.txt
 ## Contribution
 All the team memebers have contributed equally.
 - **Gaurav** and **Kirtan** worked on LLM model selection, model preperation and backend part.
-- **Jayshil** and **Amit** worked on data preprocessing, created csv and json for further use and frontend/UI part.
+- **Jayshil** and **Amit Prajapati** worked on data preprocessing, created csv and json for further use and frontend/UI part.
 - **Ankur** and **Rohit Gupta** worked on data gathering from different trusted sorces, project report and PPT.
 
 ## License
